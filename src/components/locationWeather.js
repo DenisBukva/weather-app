@@ -1,12 +1,10 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import Tooltip from "@material-ui/core/Tooltip";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt";
 import ErrorIcon from "@material-ui/icons/Error";
+import WeatherDisplay from './WeatherDisplay';
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,14 +23,11 @@ const useStyles = makeStyles(theme => ({
     description: {
         flex: 1,
     },
-    largeAvatar: {
-        width: theme.spacing(7),
-        height: theme.spacing(7),
-    },
+
 }));
 
 const REACT_APP_WEATHER_API_KEY = 'dd8fccdba7dc57fd3627a616118818a3';
-  const GetApi = async location => {
+const GetApi = async location => {
     try {
         const result = await fetch(
             `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${REACT_APP_WEATHER_API_KEY}&units=metric`,
@@ -66,38 +61,7 @@ function ErrorMessage({ apiError }) {
     );
 }
 
-function WeatherDisplay({ weatherData }) {
-    const classes = useStyles();
-    const { temp, description, icon, windTransform, windSpeed } = useMemo(() => {
-        const [weather] = weatherData.weather || [];
-        return {
-            temp: weatherData.main && weatherData.main.temp ? Math.round(weatherData.main.temp).toString() : "",
-            description: weather ? weather.description : "",
-            icon: weather ? `http://openweathermap.org/img/wn/${weather.icon}@2x.png` : "",
-            windTransform: weatherData.wind ? weatherData.wind.deg - 90 : null,
-            windSpeed: weatherData.wind ? Math.round(weatherData.wind.speed) : 0,
-        };
-    }, [weatherData]);
 
-    return (
-        <>
-            {temp && <Typography variant="h6">{temp}&deg;C</Typography>}
-            {icon && (
-                <Tooltip title={description} aria-label={description}>
-                    <Avatar className={classes.largeAvatar} alt={description} src={icon} />
-                </Tooltip>
-            )}
-            {windSpeed > 0 && (
-                <>
-                    <Typography variant="h6">{`${windSpeed} km/h`}</Typography>
-                    {windTransform !== null && (
-                        <ArrowRightAltIcon style={{ transform: `rotateZ(${windTransform}deg)` }} />
-                    )}
-                </>
-            )}
-        </>
-    );
-}
 
 function LocationWeather({ location }) {
     const classes = useStyles();
